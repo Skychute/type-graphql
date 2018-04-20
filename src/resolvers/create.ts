@@ -19,7 +19,11 @@ export function createHandlerResolver(
 
   return async (root, args, context, info) => {
     const actionData: ActionData = { root, args, context, info };
-    await checkForAccess(actionData, authChecker, resolverMetadata.roles);
+    try {
+      await checkForAccess(actionData, authChecker, resolverMetadata.roles);
+    } catch (err) {
+      return null;
+    }
     const params: any[] = await getParams(
       resolverMetadata.params!,
       actionData,
@@ -42,7 +46,11 @@ export function createAdvancedFieldResolver(
 
   return async (root, args, context, info) => {
     const actionData: ActionData = { root, args, context, info };
-    await checkForAccess(actionData, authChecker, fieldResolverMetadata.roles);
+    try {
+      await checkForAccess(actionData, authChecker, fieldResolverMetadata.roles);
+    } catch (err) {
+      return null;
+    }
     const targetInstance: any = convertToType(targetType, root);
     // method
     if (fieldResolverMetadata.handler) {
@@ -65,7 +73,11 @@ export function createSimpleFieldResolver(
   const authChecker = BuildContext.authChecker;
   return async (root, args, context, info) => {
     const actionData: ActionData = { root, args, context, info };
-    await checkForAccess(actionData, authChecker, fieldMetadata.roles);
+    try {
+      await checkForAccess(actionData, authChecker, fieldMetadata.roles);
+    } catch (err) {
+      return null;
+    }
     return root[fieldMetadata.name];
   };
 }
